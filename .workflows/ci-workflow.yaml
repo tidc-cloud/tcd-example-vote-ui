@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  # generateName: ci-
+  name: ci
+spec:
+  entrypoint: main
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: build
+            template: build
+            arguments:
+              parameters:
+                - name: profile
+                  value: dev
+
+
+    - name: build
+      inputs:
+        parameters:
+          - name: profile
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+
+          echo "Building {{inputs.parameters.profile}}.."
+
