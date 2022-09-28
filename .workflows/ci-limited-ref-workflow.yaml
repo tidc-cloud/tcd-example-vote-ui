@@ -46,3 +46,4 @@ spec:
                 - name: registry
                   value: tcr.tks.trueidc.com/sandbox-private
 
+
