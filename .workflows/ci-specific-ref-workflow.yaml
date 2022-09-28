@@ -19,15 +19,15 @@ spec:
             #    - branch test/*  Example test/dev  test/uat
             #    - tag v<semver>  Example v1.0.0 v1.0.0-rc.1
             when: >-
-              ( {{workflow.parameters.git_ref_type}} == "tag" && {{workflow.parameters.git_ref_name}} =~ "^v\d+(\.\d+){0,2}(\-.+)?$" )
-              || ({{workflow.parameters.git_ref_type}} == "branch" && {{workflow.parameters.git_ref_name}} =~ "^test\/.+$" )
+              ( "{{workflow.parameters.git_ref_type}}" == "tag" && "{{workflow.parameters.git_ref_name}}" =~ "^v\d+(\.\d+){0,2}(\-.+)?$" )
+              || ( "{{workflow.parameters.git_ref_type}}" == "branch" && "{{workflow.parameters.git_ref_name}}" =~ "^test\/.+$" )
             templateRef:
               name: git
               template: checkout
 
           - name: build-dev-image
             when: >-
-              {{workflow.parameters.git_ref_type}} == "branch" && {{workflow.parameters.git_ref_name}} == "test/dev"
+              "{{workflow.parameters.git_ref_type}}" == "branch" && "{{workflow.parameters.git_ref_name}}" == "test/dev"
             depends: checkout.Succeeded
             templateRef:
               name: container
@@ -41,3 +41,21 @@ spec:
                   value: tcr.tks.trueidc.com/sandbox-private
                 - name: imageTag
                   value: "dev-{{workflow.parameters.git_ref_id}}"
+
+          - name: build-qa-image
+            when: >-
+              "{{workflow.parameters.git_ref_type}}" == "branch" && "{{workflow.parameters.git_ref_name}}" == "test/qa"
+            depends: checkout.Succeeded
+            templateRef:
+              name: container
+              template: build
+            arguments:
+              artifacts:
+                - name: src
+                  from: "{{tasks.checkout.outputs.artifacts.src}}"
+              parameters:
+                - name: registry
+                  value: tcr.tks.trueidc.com/sandbox-private
+                - name: imageTag
+                  value: "qa-{{workflow.parameters.git_ref_id}}"
+
