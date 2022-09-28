@@ -67,7 +67,7 @@ spec:
           #    - tag vx.x.x
           - name: build-release-image
             when: >-
-              "{{workflow.parameters.git_ref_type}}" == "tag" && "{{workflow.parameters.git_ref_name}}" =~ "v\d+(\.\d+){0,2}(\-.+)?"
+              "{{workflow.parameters.git_ref_type}}" == "tag" && "{{workflow.parameters.git_ref_name}}" =~ "^v[0-9+(\.[0-9]+){0,2}(\-.+)?$"
             depends: checkout.Succeeded
             templateRef:
               name: container
