@@ -38,4 +38,3 @@ tasks:
 ## - Array of reusable templates
 # https://argoproj.github.io/argo-workflows/fields/#template
 templates: {}
-
