@@ -7,7 +7,7 @@ name: ci-build-pipeline
 # - GitHub Action on (https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on)
 # Condition valid when at lease one of these valid
 when:
-  - push:
+  push:
     - type: branch
       matcher: glob
       value: deploy/*
