@@ -11,6 +11,9 @@ when:
     - type: branch
       matcher: glob
       value: deploy/*
+      changes:
+        - 'Dockerfile'
+        - '**.py'
     - type: tag
       matcher: semver
     - type: tag
@@ -19,9 +22,17 @@ when:
     - type: tag
       matcher: glob
       value: test-*
+      changes:
+        - 'Dockerfile'
+        - 'requirements.txt'
     - type: branch
       matcher: glob
       value: test/*
+      changes:
+        - 'Dockerfile'
+        - 'requirements.txt'
+
+
 ## - Pipeline tasks
 ##  https://argoproj.github.io/argo-workflows/fields/#dagtask
 tasks:
