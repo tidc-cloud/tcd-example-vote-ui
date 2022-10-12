@@ -43,6 +43,24 @@ tasks:
         - name: registry
           value: tcr.tks.trueidc.com/sandbox-private
 
+  - name: build-result
+    depends: build-image
+    template: echo
+    arguments:
+      parameters:
+        - name: message
+          value: "Successful build"
+
 ## - Array of reusable templates
 # https://argoproj.github.io/argo-workflows/fields/#template
-templates: {}
+templates:
+  - name: echo
+    inputs:
+      parameters:
+        - name: message
+          value: ""
+    script:
+      image: alpine
+      command: [/bin/sh]
+      source: |
+        echo "{{inputs.parameters.message}}"
