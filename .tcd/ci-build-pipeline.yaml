@@ -16,7 +16,12 @@ when:
     - type: tag
       matcher: glob
       value: deploy-*
-
+    - type: tag
+      matcher: glob
+      value: test-*
+    - type: branch
+      matcher: glob
+      value: test/*
 ## - Pipeline tasks
 ##  https://argoproj.github.io/argo-workflows/fields/#dagtask
 tasks:
