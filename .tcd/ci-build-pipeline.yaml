@@ -13,6 +13,9 @@ when:
       value: deploy/*
     - type: tag
       matcher: semver
+    - type: tag
+      matcher: glob
+      value: deploy-*
 
 ## - Pipeline tasks
 ##  https://argoproj.github.io/argo-workflows/fields/#dagtask
