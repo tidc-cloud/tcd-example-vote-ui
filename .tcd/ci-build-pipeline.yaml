@@ -25,12 +25,14 @@ when:
       changes:
         - 'Dockerfile'
         - 'requirements.txt'
+        - '.tcd/**'
     - type: branch
       matcher: glob
       value: test/*
       changes:
         - 'Dockerfile'
         - 'requirements.txt'
+        - '.tcd/**'
 
 
 ## - Pipeline tasks
