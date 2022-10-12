@@ -4,8 +4,8 @@ This directory contains pipelines to be running when push event on git.
 
 ---
 
-## Naming convention
+## Pipeline naming convention
 
-`*-pipeline.yaml`
+Pipelines file `*-pipeline.yaml` in `.tcd` directory
 
 ---
