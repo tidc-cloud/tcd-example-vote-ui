@@ -9,6 +9,8 @@ from redis import Redis
 
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
+region = os.getenv('REGION', "Test")
+
 hostname = socket.gethostname()
 
 redis_host = os.getenv('REDIS_HOST', "redis")
@@ -45,6 +47,7 @@ def hello():
         option_b=option_b,
         hostname=hostname,
         vote=vote,
+        region=region,
     ))
     resp.set_cookie('voter_id', voter_id)
     return resp
