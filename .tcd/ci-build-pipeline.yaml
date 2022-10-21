@@ -57,6 +57,8 @@ tasks:
       parameters:
         - name: registry
           value: tcr.tks.trueidc.com/sandbox-private
+        - name: imageName
+          value: vote
 
   - name: build-result
     depends: build-image
