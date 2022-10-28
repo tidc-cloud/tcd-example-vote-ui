@@ -9,11 +9,8 @@ name: ci-build-pipeline
 when:
   push:
     - type: branch
-      matcher: glob
-      value: deploy/*
-      changes:
-        - 'Dockerfile'
-        - '**.py'
+      matcher: exact
+      value: dev
     - type: tag
       matcher: semver
     - type: tag
