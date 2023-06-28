@@ -5,10 +5,10 @@ on:
     #branches: [ "1.6" ]
     tags:
       - 'v*.*.*'
-
+      
 jobs:
   setenv:
-    runs-on: self-hosted
+    runs-on: cluster0-nxcp-runner
     steps:
       - name: Check Tag
         id: check-tag
@@ -33,7 +33,7 @@ jobs:
       harbor_pass: ${{ steps.getenv.outputs.harbor_pass }}
       tag_name: ${{ steps.getenv.outputs.tag_name }}
   build-container:
-    runs-on: self-hosted
+    runs-on: cluster0-nxcp-runner
     container: gcr.io/kaniko-project/executor:v1.9.0-debug
     needs: setenv
     steps:
