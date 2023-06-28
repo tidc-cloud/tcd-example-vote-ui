@@ -1,3 +1,18 @@
+# name: CI
+# on:
+#   push:
+#     #branches: [ "1.6" ]
+#     tags:
+#       - 'v*.*.*'
+# jobs:
+#   include:
+#     # needs: test
+#     name: Backend ci
+#     uses: tidc-cloud/devops-app-ci/.github/workflows/github-backend-ci-v2.yml@main
+#     with:
+#       image: ${GITHUB_REPOSITORY#tidc-cloud/core-cluster0-}
+
+
 name: CI
 on:
   push:
@@ -5,9 +20,42 @@ on:
     tags:
       - 'v*.*.*'
 jobs:
-  include:
-    # needs: test
-    name: Backend ci
-    uses: tidc-cloud/devops-app-ci/.github/workflows/github-backend-ci-v2.yml@main
-    with:
-      image: ${GITHUB_REPOSITORY#tidc-cloud/core-cluster0-}
+  setenv:
+    runs-on: cluster0-nxcp-runner
+    steps:
+      - name: Check Tag
+        id: check-tag
+        run: |
+          if [[ $GITHUB_REF_NAME =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+              echo ::set-output name=match::true;
+          else
+              exit 1;
+          fi
+      - name: Check ENV
+        id: getenv
+        run: |
+          eval $(curl github-secret.github-action-secret.svc:8080/secret);
+          echo "::set-output name=harbor_registry::$HARBOR_REGISTRY"
+          echo "::set-output name=harbor_user::$HARBOR_USER"
+          echo "::set-output name=harbor_pass::$HARBOR_PASS"
+          echo "::set-output name=tag_name::${GITHUB_REF_NAME:1}"
+      - uses: actions/checkout@v3
+    outputs:
+      harbor_registry: ${{ steps.getenv.outputs.harbor_registry }}
+      harbor_user: ${{ steps.getenv.outputs.harbor_user }}
+      harbor_pass: ${{ steps.getenv.outputs.harbor_pass }}
+      tag_name: ${{ steps.getenv.outputs.tag_name }}
+  build-container:
+    runs-on: cluster0-nxcp-runner
+    container: gcr.io/kaniko-project/executor:v1.9.0-debug
+    needs: setenv
+    steps:
+      - name: kaniko
+        run: |
+            mkdir -p /kaniko/.docker
+            pwd
+            ls -l
+            # Add dev auth
+            echo -e '{"auths":{"${{needs.setenv.outputs.harbor_registry}}":{"username":"${{needs.setenv.outputs.harbor_user}}","password":"${{needs.setenv.outputs.harbor_pass}}"}}}' > /kaniko/.docker/config.json
+            cat /kaniko/.docker/config.json
+            /kaniko/executor --context "$(pwd)" --dockerfile ./Dockerfile  --destination "${{needs.setenv.outputs.harbor_registry}}/sandbox-private/vote:${{needs.setenv.outputs.tag_name}}"  --build-arg GIT_USER=github-ci-token --build-arg GIT_PASS=${{ secrets.GITHUB_TOKEN }}
